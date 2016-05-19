@@ -25,7 +25,7 @@
             dxMin = 5,
             dxMax = canvas.width - 5,
             dyMin = 5,
-            dyMax = 391,
+            dyMax = 401,
 
             // Key
             arrowLeft = 37,
@@ -42,15 +42,15 @@
             dxLine = canvas.width / 2 - 50 / 2,
             dxLineMin = dxMin,
             dxLineMax = dxMax - lineW,
-            dyLine = dyMax,
-            lineSpeed = 3,
+            dyLine = dyMax - 20,
+            lineSpeed = 4,
 
             //ball
             ballRadius = 6,
             dxBall = canvas.width / 2,
             dyBall = dyLine - ballRadius,
-            ballSpeedX = -2,
-            ballSpeedY = -3,
+            ballSpeedX = Math.floor(Math.random() * 4) + 1,
+            ballSpeedY = Math.floor(Math.random() * 4) + 1,
             directionX = 1,
             directionY = 1;
 
@@ -158,22 +158,31 @@
                 speedX = ballSpeedX;
                 speedY = ballSpeedY;
             }
+            // collision avec la barre (Line)
+            if (    dxBall >= dxLine &&
+                    dxBall <= dxLine + lineW &&
+                    dyBall + ballRadius >= dyLine &&
+                    dyBall + ballRadius <= dyLine ) {
+                directionX *= -1;
+                directionY *= -1;
+                speedX = Math.floor( Math.random() * 4 ) + 1;
+            }
 
             // Gestion des collisions avec les bords du jeu
             // changer la direction plutot que la valeur -> ca bug moins
-            if ( dyBall - ballRadius <= dyMin ){
-                directionY *= -1;
-            }
-
             if ( dxBall - ballRadius <= dxMin || dxBall + ballRadius >= dxMax ) {
                 directionX *= -1;
+            }
+
+            if ( dyBall - ballRadius <= dyMin ){
+                directionY *= -1;
             }
 
             // Game over
             if ( dyBall + ballRadius >= dyMax + lineH / 2 ) {
                 directionX = 0;
                 directionY = 0;
-                console.log("You lose !");
+                gameStarted = false;
                 this.restart();
             }
 
@@ -194,7 +203,6 @@
         };
 
         this.restart = function() {
-            console.log("Bite");
             gameStarted = false;
 
             //Reset Ball
@@ -208,7 +216,6 @@
 
             //Reset line
             dxLine = canvas.width / 2 - 50 / 2;
-            lineSpeed = 3;
 
             keyPressed = window.addEventListener( "keydown", this.getKeyPressed.bind( this ) );
             keyPressed = window.addEventListener( "keyup", this.getKeyPressed.bind( this ) );
