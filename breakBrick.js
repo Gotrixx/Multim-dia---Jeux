@@ -21,6 +21,12 @@
             gameStarted = false,
             gamePaused = false,
 
+            // Border
+            dxMin = 5,
+            dxMax = canvas.width - 5,
+            dyMin = 5,
+            dyMax = 391,
+
             // Key
             arrowLeft = 37,
             arrowRight = 39,
@@ -34,16 +40,19 @@
             lineW = 50,
             lineH = 7,
             dxLine = canvas.width / 2 - 50 / 2,
-            dxLineMin = 0 + 4,
-            dxLineMax = canvas.width - lineW - 5,
-            dyLine = 391,
+            dxLineMin = dxMin,
+            dxLineMax = dxMax - lineW,
+            dyLine = dyMax,
             lineSpeed = 3,
 
             //ball
+            ballRadius = 6,
             dxBall = canvas.width / 2,
-            dyBall = dyLine - lineH,
-            ballRadius = 7,
-            ballSpeed = 1;
+            dyBall = dyLine - ballRadius,
+            ballSpeedX = -2,
+            ballSpeedY = -3,
+            directionX = 1,
+            directionY = 1;
 
         grid = {
             "1":["white", "white", "white", "white", "white", "white", "white", "white", "white", "white", "white", "white", "white", "white"],
@@ -74,7 +83,7 @@
             "frames": {
                 "sx": 0,
                 "sy": 0,
-                "sw": 308,
+                "sw": 309,
                 "sh": 511,
                 "dx": 0,
                 "dy": 0,
@@ -83,6 +92,26 @@
             },
             "draw": function() {
                 game._drawSpriteFromFrame( this.frames );
+            }
+        };
+
+        // Blocks
+        this.blocks = function() {
+            var oContext = game.app.context,
+                j,
+                dxBlocks = 8,
+                dyBlocks = 8,
+                blocksW = 20,
+                blocksH = 20;
+
+            for( i = 1 ; i <= 14 ; i++ ) {// Il faut réinitialiser le i parce que sinon il ne repasse jamais a 1 (en tout cas ca fait buger)
+                for ( j = 0; j <= 13 ; j++ ) {
+                    oContext.fillStyle = grid[i][j];
+                    oContext.fillRect( dxBlocks, dyBlocks, blocksW, blocksH );
+                    dxBlocks += 21;
+                }
+                dxBlocks = 8;
+                dyBlocks += 21;
             }
         };
 
@@ -118,17 +147,35 @@
         // ball
         this.ball = function() {
             var oContext = game.app.context,
-                speed;
+                speedX = ballSpeedX,
+                speedY = ballSpeedY;
 
+            // Si le jeu est en pause on met la vitesse à 0 sinon on la remet
             if ( gamePaused ) {
-                speed = 0;
+                speedX = 0;
+                speedY = 0;
             }else {
-                speed = ballSpeed;
+                speedX = ballSpeedX;
+                speedY = ballSpeedY;
             }
 
+            // Gestion des collisions avec les bords du jeu
+            // changer la direction plutot que la valeur -> ca bug moins
+            if ( dyBall - ballRadius <= dyMin || dyBall + ballRadius >= dyMax + lineH / 2 ){
+                directionY *= -1;
+            }
+
+            if ( dxBall - ballRadius <= dxMin || dxBall + ballRadius >= dxMax ) {
+                directionX *= -1;
+            }
+
+            // Au démarage la balle monte verticalement
+            // Départ aléatoire ??
             if ( gameStarted ) {
-                dyBall -= speed;
+                dxBall += speedX * directionX;
+                dyBall += speedY * directionY;
             }else {
+                dxBall = dxBall;
                 dyBall = dyBall;
             }
 
@@ -136,26 +183,6 @@
             oContext.fillStyle = "red";
             oContext.arc( dxBall, dyBall, ballRadius, 0, 2 * Math.PI);// on dessine les cercle depuis le centre
             oContext.fill();
-        };
-
-        // Blocks
-        this.blocks = function() {
-            var oContext = game.app.context,
-                j,
-                dx = 8,
-                dy = 8,
-                dw = 20,
-                dh = 20;
-
-            for( i = 1 ; i <= 14 ; i++ ) {// Il faut réinitialiser le i parce que sinon il ne repasse jamais a 1 (en tout cas ca fait buger)
-                for ( j = 0; j <= 13 ; j++ ) {
-                    oContext.fillStyle = grid[i][j];
-                    oContext.fillRect( dx, dy, dw, dh );
-                    dx += 21;
-                }
-                dx = 8;
-                dy += 21;
-            }
         };
 
         this.getKeyPressed = function( oEvent ) {
@@ -213,12 +240,12 @@
             this.app.context.clearRect( 0, 0, this.app.width, this.app.height );
             // draw: background
             this.background.draw();
+            // draw: blocks
+            this.blocks();
             // draw: line
             this.line();
             // draw: ball
             this.ball();
-            // draw: blocks
-            this.blocks();
         }
 
         // Init game
@@ -235,7 +262,7 @@
         // Load spritesheet
         this.spriteSheet = new Image();
         this.spriteSheet.addEventListener( "load", this.start.bind( this ) );
-        this.spriteSheet.src = "./resources/sprite.png";
+        this.spriteSheet.src = "sprite.png";
 
     };
 
