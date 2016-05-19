@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+
+        <title>Casse Brique</title>
+
+        <style>
+            body {
+                background: url( '' );
+            }
+
+            h1 {
+                font-family: 'Fira Sans';
+                letter-spacing: 4px;
+                color: turquoise;
+                text-align: center;
+                text-shadow: 0 0 2px rgba( 0, 0, 0, 0.8 );
+                text-transform: uppercase;
+            }
+
+            h2 {
+                font-family: 'Fira Sans';
+                letter-spacing: 4px;
+                color: turquoise;
+                text-align: center;
+                text-shadow: 0 0 2px rgba( 0, 0, 0, 0.8 );
+                text-transform: uppercase;
+            }
+
+            canvas {
+                display: block;
+                margin: 20px auto;
+                border: 1px solid rgba( 0, 50, 100, 0.4 );
+                box-shadow: 0 0 20px 0 rgba( 0, 0, 0, 0.4 );
+            }
+
+            .commandes{
+                width: 450px;
+                margin: 0 auto;
+                font-size: 1.1rem;
+            }
+
+            .key{
+                display: block;
+                margin-bottom: 10px;
+            }
+
+            ::selection {
+                background: transparent;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>Casse Brique</h1>
+
+        <canvas id="game" width="309" height="511"></canvas>
+
+        <h2>Commandes</h2>
+
+        <p class="commandes">
+            <span class="key">Lancer le jeu&nbsp;: <strong>ENTER</strong></span>
+            <span class="key">Pause&nbsp;: <strong>ESPACE</strong></span>
+            <span class="key">Diriger la barre&nbsp;: <strong>FLÈCHE GAUCHE</strong> et <strong>FLÈCHE DROITE</strong></span>
+        </p>
+
+        <script src="breakBrick.js"></script>
+        <script src="game.js"></script>
+    </body>
+</html>
