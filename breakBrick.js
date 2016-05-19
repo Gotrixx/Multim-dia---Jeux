@@ -161,12 +161,20 @@
 
             // Gestion des collisions avec les bords du jeu
             // changer la direction plutot que la valeur -> ca bug moins
-            if ( dyBall - ballRadius <= dyMin || dyBall + ballRadius >= dyMax + lineH / 2 ){
+            if ( dyBall - ballRadius <= dyMin ){
                 directionY *= -1;
             }
 
             if ( dxBall - ballRadius <= dxMin || dxBall + ballRadius >= dxMax ) {
                 directionX *= -1;
+            }
+
+            // Game over
+            if ( dyBall + ballRadius >= dyMax + lineH / 2 ) {
+                directionX = 0;
+                directionY = 0;
+                console.log("You lose !");
+                this.restart();
             }
 
             // Au démarage la balle monte verticalement
@@ -183,6 +191,27 @@
             oContext.fillStyle = "red";
             oContext.arc( dxBall, dyBall, ballRadius, 0, 2 * Math.PI);// on dessine les cercle depuis le centre
             oContext.fill();
+        };
+
+        this.restart = function() {
+            console.log("Bite");
+            gameStarted = false;
+
+            //Reset Ball
+            ballRadius = 6;
+            dxBall = canvas.width / 2;
+            dyBall = dyLine - ballRadius;
+            ballSpeedX = -2;
+            ballSpeedY = -3;
+            directionX = 1;
+            directionY = 1;
+
+            //Reset line
+            dxLine = canvas.width / 2 - 50 / 2;
+            lineSpeed = 3;
+
+            keyPressed = window.addEventListener( "keydown", this.getKeyPressed.bind( this ) );
+            keyPressed = window.addEventListener( "keyup", this.getKeyPressed.bind( this ) );
         };
 
         this.getKeyPressed = function( oEvent ) {
